@@ -1,7 +1,9 @@
 var panorama,
-    timer,
-    interval = 20,
-    increment = 0.2,
+    panoTimer,
+    panoInterval = 5000,
+    spinTimer,
+    spinInterval = 20,
+    spinIncrement = 0.2,
     div = document.getElementById('street-view'),
     options = 
     {
@@ -19,10 +21,10 @@ function initialiseRinaView()
   startSpinning()
 }
 
-function spinIt() 
+function spin() 
 {
   var pov = panorama.getPov()
-  pov.heading += increment
+  pov.heading += spinIncrement
   while (pov.heading > 360.0) 
   {
     pov.heading -= 360.0
@@ -34,21 +36,34 @@ function spinIt()
 
 function stopSpinning() 
 {
-  clearTimeout(timer)
+  clearTimeout(spinTimer)
 }
 
 function startSpinning() 
 {
-  clearTimeout(timer)
-  timer = setInterval('spinIt()', interval)
+  stopSpinning()
+  spinTimer = setInterval(spin, spinInterval)
 }
 
 function changePano()
 {
+  console.log('changePano')
+
   var links = panorama.getLinks(),
       nextPano = links[0].pano
       
   panorama.setPano(nextPano)
+}
+
+function startChangingPano()
+{
+  stopChangingPano()
+  panoTimer = setInterval(changePano, panoInterval)
+}
+
+function stopChangingPano()
+{
+  clearTimeout(panoTimer)
 }
 
 
