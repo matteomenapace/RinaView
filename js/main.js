@@ -1,9 +1,8 @@
 var panorama,
     panoTimer,
     panoInterval = 5000,
-    spinTimer,
-    spinInterval = 20,
-    spinIncrement = 0.2,
+    spinRequest,
+    spinIncrement = 0.1,
     div = document.getElementById('street-view'),
     options = 
     {
@@ -25,24 +24,21 @@ function spin()
 {
   var pov = panorama.getPov()
   pov.heading += spinIncrement
-  while (pov.heading > 360.0) 
-  {
-    pov.heading -= 360.0
-    changePano()
-  }
-  while (pov.heading < 0.0) pov.heading += 360.0
+  if (pov.heading > 360) changePano()
+  while (pov.heading > 360) pov.heading -= 360
+  while (pov.heading < 0) pov.heading += 360
   panorama.setPov(pov)
 }
 
 function stopSpinning() 
 {
-  clearTimeout(spinTimer)
+  cancelAnimationFrame(spinRequest)
 }
 
 function startSpinning() 
 {
-  stopSpinning()
-  spinTimer = setInterval(spin, spinInterval)
+  spin()
+  spinRequest = requestAnimationFrame(startSpinning)
 }
 
 function changePano()
